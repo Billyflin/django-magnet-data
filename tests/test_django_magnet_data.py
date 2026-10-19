@@ -43,6 +43,25 @@ class TestCurrencies(TestCase):
         clf_in_clp_on_july_fifth = clf_to_clp_converter.on_date(date=date)
         self.assertEqual(clf_in_clp_on_july_fifth, Decimal("33152.680000"))
 
+    def test_utm(self):
+        currencies = MagnetDataClient().currencies
+
+        utm_to_clp = currencies.get_pair(currencies.UTM, currencies.CLP)
+
+        # every day of a month has the same value
+        first = utm_to_clp.on_date(datetime.date(2022, 7, 1))
+        self.assertGreater(first, 0)
+        self.assertEqual(first, utm_to_clp.on_date(datetime.date(2022, 7, 25)))
+        self.assertEqual(first, Decimal("58248"))
+
+        self.assertGreater(utm_to_clp.now(), 0)
+
+        # inverse
+        clp_to_utm = currencies.get_pair(currencies.CLP, currencies.UTM)
+        self.assertAlmostEqual(
+            clp_to_utm.on_date(datetime.date(2022, 7, 1)), 1 / first
+        )
+
     def test_invalid_currency_acronyms(self):
         magnet_data_client = MagnetDataClient()
         currencies = magnet_data_client.currencies

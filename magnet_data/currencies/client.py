@@ -8,6 +8,7 @@ import json
 from django.apps import apps
 
 # magnet data
+from magnet_data.currencies.enums import MONTHLY_CURRENCIES
 from magnet_data.currencies.urls import API_URL
 
 
@@ -37,6 +38,14 @@ def update_values(year: int, month: int, base_currency: str,
 
     response = urlopen(request)
     data = json.loads(response.read())
+
+    if base_currency.upper() in MONTHLY_CURRENCIES:
+        # monthly currencies return a single value for the whole month, which
+        # is stored on the first day of the month
+        data = {"objects": [{
+            "date": f"{data['year']:04d}-{data['month']:02d}-01",
+            "value": data["value"],
+        }]}
 
     for values_data in data["objects"]:
         date_string = values_data["date"]

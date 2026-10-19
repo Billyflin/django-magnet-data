@@ -35,7 +35,9 @@ Add `magnet_data` to your `INSTALLED_APPS`:
 
 ## Currency API
 
-Magnet data handles the value of 4 currencies: `CLP`, `USD`, `EUR`, and `CLF`. Currently the api can only return the values of this currencies in `CLP`.
+Magnet data handles the value of 5 currencies: `CLP`, `USD`, `EUR`, `CLF` and `UTM`. Currently the api can only return the values of this currencies in `CLP`.
+
+`UTM` has a single value per month, so every date within a month returns the same value.
 
 Values are returned as [decimal.Decimal](https://docs.python.org/3/library/decimal.html "decimal.Decimal")
 

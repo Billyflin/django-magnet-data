@@ -9,6 +9,7 @@ from django.apps import apps
 # magnet data
 from magnet_data import utils
 from magnet_data.currencies.enums import CurrencyAcronyms
+from magnet_data.currencies.enums import MONTHLY_CURRENCIES
 from magnet_data.currencies.exceptions import ValueNotFoundException
 from magnet_data.currencies.client import update_values
 
@@ -98,10 +99,16 @@ class CurrencyPair:
             return self.cast_value(value)
 
         if self.counter_currency == CurrencyAcronyms.CLP:
+            # monthly currencies are stored on the first day of the month
+            if self.base_currency in MONTHLY_CURRENCIES:
+                value_date = date.replace(day=1)
+            else:
+                value_date = date
+
             queryset = CurrencyValue.objects.filter(
                 base_currency=self.base_currency,
                 counter_currency=self.counter_currency,
-                date=date,
+                date=value_date,
             )
 
             try:
